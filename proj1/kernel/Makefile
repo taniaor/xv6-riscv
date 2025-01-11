@@ -1,1 +1,0 @@
-OBJS += proj1/kernel/somefile.o
