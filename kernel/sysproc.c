@@ -50,11 +50,11 @@ sys_calculate(void)
         temp_result = x * y;
     } else if (strncmp(input_op, "/", 1) == 0) {
         if (y == 0) {
-            return -1; // Division by zero error
+            return -1; // divide by zero error
         }
         temp_result = x / y;
     } else {
-        return -1; 
+        return -1; // Unknown opcode provided or another error occured
     }
     
     copyout(myproc()->pagetable, (uint64)result, (char*)&temp_result, sizeof(int)); 
