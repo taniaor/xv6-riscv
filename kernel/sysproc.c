@@ -34,26 +34,31 @@ sys_calculate(void)
     int x=0;
     int y=0;
     char input_op[16];
-    int *result = &x;
+    int* result;
+    int temp_result;
 
     argint(0,&x);
     argint(1,&y);
     argstr(2, input_op, sizeof(input_op));
-
-    if (strncmp(input_op, "+", 1)) {       
-        *result = x + y;
-    } else if (strncmp(input_op, "-", 1)) {
-        *result = x - y;
-    } else if (strncmp(input_op, "*", 1)) {
-        *result = x * y;
-    } else if (strncmp(input_op, "/", 1)) {
+    argint(3, (int*)&result);
+    
+    if (strncmp(input_op, "+", 1) == 0) {   
+        temp_result = x + y;
+    } else if (strncmp(input_op, "-", 1) == 0) {
+        temp_result = x - y;
+    } else if (strncmp(input_op, "*", 1) == 0) {
+        temp_result = x * y;
+    } else if (strncmp(input_op, "/", 1) == 0) {
         if (y == 0) {
             return -1; // Division by zero error
         }
-        *result = x / y;
+        temp_result = x / y;
     } else {
         return -1; 
     }
+    printf("Debug: x=%d, y=%d, op=%s, result=%d\n", x, y, input_op, temp_result);
+
+    copyout(myproc()->pagetable, (uint64)result, (char*)&temp_result, sizeof(int));
 
     return 0; // Success
 }
