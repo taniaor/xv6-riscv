@@ -5,6 +5,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include <stddef.h>
 
 uint64
 sys_exit(void)
@@ -28,6 +29,36 @@ sys_fork(void)
 }
 
 uint64
+sys_calculate(void)
+{
+    int x=0;
+    int y=0;
+    char input_op[16];
+    int *result = &x;
+
+    argint(0,&x);
+    argint(1,&y);
+    argstr(2, input_op, sizeof(input_op));
+
+    if (strncmp(input_op, "+", 1)) {       
+        *result = x + y;
+    } else if (strncmp(input_op, "-", 1)) {
+        *result = x - y;
+    } else if (strncmp(input_op, "*", 1)) {
+        *result = x * y;
+    } else if (strncmp(input_op, "/", 1)) {
+        if (y == 0) {
+            return -1; // Division by zero error
+        }
+        *result = x / y;
+    } else {
+        return -1; 
+    }
+
+    return 0; // Success
+}
+
+uint64 
 sys_wait(void)
 {
   uint64 p;
