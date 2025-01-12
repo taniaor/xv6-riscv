@@ -34,8 +34,8 @@ sys_calculate(void)
     int x=0;
     int y=0;
     char input_op[16];
-    int* result;
     int temp_result;
+    int* result;
 
     argint(0,&x);
     argint(1,&y);
@@ -56,9 +56,8 @@ sys_calculate(void)
     } else {
         return -1; 
     }
-    printf("Debug: x=%d, y=%d, op=%s, result=%d\n", x, y, input_op, temp_result);
-
-    copyout(myproc()->pagetable, (uint64)result, (char*)&temp_result, sizeof(int));
+    
+    copyout(myproc()->pagetable, (uint64)result, (char*)&temp_result, sizeof(int)); 
 
     return 0; // Success
 }
