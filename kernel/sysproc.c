@@ -5,6 +5,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include <stddef.h>
 
 uint64
 sys_exit(void)
@@ -27,7 +28,7 @@ sys_fork(void)
   return fork();
 }
 
-uint64
+uint64 
 sys_wait(void)
 {
   uint64 p;
