@@ -124,6 +124,8 @@ mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
 
+include proj1/user/Makefile
+
 UPROGS=\
 	$U/_cat\
 	$U/_echo\
@@ -142,8 +144,6 @@ UPROGS=\
 	$U/_wc\
 	$U/_zombie\
     $U/_calc\
-
-include proj1/user/Makefile
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
