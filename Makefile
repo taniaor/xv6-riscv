@@ -141,6 +141,7 @@ UPROGS=\
 	$U/_wc\
 	$U/_zombie\
 	$U/_calc\
+	$U/_pipe_ipc\
 	$U/_priority\
 
 fs.img: mkfs/mkfs README $(UPROGS)
