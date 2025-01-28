@@ -124,6 +124,7 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  p->priority = 10;
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -445,6 +446,7 @@ void
 scheduler(void)
 {
   struct proc *p;
+  struct proc *higher_priority_proc;
   struct cpu *c = mycpu();
 
   c->proc = 0;
@@ -454,6 +456,7 @@ scheduler(void)
     // processes are waiting.
     intr_on();
 
+    higher_priority_proc = 0;
     int found = 0;
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
@@ -461,6 +464,9 @@ scheduler(void)
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
+        if (!higher_priority_proc || p->priority > higher_priority_proc->priority) {
+          higher_priority_proc = p;
+        }        
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
@@ -472,6 +478,20 @@ scheduler(void)
       }
       release(&p->lock);
     }
+
+    if (higher_priority_proc) {
+    // Run the highest priority process
+      acquire(&higher_priority_proc->lock);
+      if (higher_priority_proc->state == RUNNABLE) {
+          higher_priority_proc->state = RUNNING;
+          c->proc = higher_priority_proc;
+          swtch(&c->context, &higher_priority_proc->context);
+          c->proc = 0;
+        }
+        release(&higher_priority_proc->lock);
+    }
+
+
     if(found == 0) {
       // nothing to run; stop running on this core until an interrupt.
       intr_on();
@@ -693,3 +713,21 @@ procdump(void)
     printf("\n");
   }
 }
+
+int
+sys_setpriority(void) {
+    int pid, priority;  
+
+    argint(0, &pid);
+    argint(1, &priority);
+    
+    struct proc *p;
+    for (p = proc; p < &proc[NPROC]; p++) {
+        if (p->pid == pid) {
+            p->priority = priority;
+            return 0;
+        }
+    }
+    return -1;  // Process not found
+}
+
