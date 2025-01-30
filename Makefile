@@ -122,6 +122,7 @@ mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
 include proj1/user/Makefile
+include proj2/user/Makefile
 
 UPROGS=\
 	$U/_cat\
